@@ -5,7 +5,7 @@ import { useRealtimeMatch } from '../hooks/useRealtimeMatch'
 import { useBroadcastPhase } from '../hooks/useBroadcastPhase'
 import Scoreboard from '../components/scoreboard/Scoreboard'
 
-function Frame({ children, transparent }: { children: ReactNode; transparent?: boolean }) {
+function Frame({ children, transparent }: { children?: ReactNode; transparent?: boolean }) {
   useEffect(() => {
     if (!transparent) return
     const root = document.documentElement

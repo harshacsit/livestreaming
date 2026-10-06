@@ -65,7 +65,7 @@ export function useBroadcastPhase(
     }
     if ((fromBreak && !toBreak) || (!toBreak && (status === 'LIVE' || status === 'FINISHED'))) {
       if (reduce || phaseRef.current === 'idle') setPhase('idle')
-      else if (phaseRef.current !== 'idle') setPhase('exiting')
+      else setPhase('exiting')
     }
   }, [status, previewAlways])
 
