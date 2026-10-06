@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,700;1,900&family=Barlow:wght@500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  background: #080e22;
+  color: #e8ecf8;
+  font-family: 'Barlow', 'Segoe UI', Arial, sans-serif;
+}
+
+@keyframes score-pop {
+  0%   { transform: scale(1.7); opacity: .25 }
+  55%  { transform: scale(1.06) }
+  100% { transform: scale(1);   opacity: 1 }
+}
+@keyframes stat-pop {
+  0%   { transform: scale(1.4); filter: brightness(2.2) }
+  100% { transform: scale(1);   filter: none }
+}
+@keyframes fade-in {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+
+.score-pop { display: inline-block; animation: score-pop .55s cubic-bezier(.22,1,.36,1) both }
+.stat-pop  { display: inline-block; animation: stat-pop  .45s ease-out both }
+.fade-in   { animation: fade-in .8s ease both }
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1) }
+  50%      { opacity: .35; transform: scale(.7) }
+}
+.live-dot {
+  width: 8px; height: 8px; border-radius: 99px;
+  background: #041016;
+  display: inline-block;
+  animation: live-pulse 1.2s ease-in-out infinite;
+}
+
+.arena-sky {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, rgba(90,140,255,.55), transparent 58%),
+    radial-gradient(ellipse 70% 40% at 50% 108%, rgba(20,80,180,.35), transparent 60%),
+    linear-gradient(180deg, #0a1738 0%, #07101f 42%, #050910 100%);
+}
+.arena-crowd {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 42%;
+  background:
+    repeating-radial-gradient(circle at 10% 80%, rgba(255,255,255,.045) 0 1px, transparent 1px 18px),
+    repeating-radial-gradient(circle at 70% 90%, rgba(255,255,255,.03) 0 1px, transparent 1px 22px),
+    linear-gradient(180deg, transparent, rgba(0,0,0,.45));
+  opacity: .85;
+}
+.arena-court {
+  position: absolute; inset: 18% 12% 10% 12%;
+  border: 2px solid rgba(255,255,255,.07);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, transparent 49.6%, rgba(255,255,255,.08) 50%, transparent 50.4%),
+    linear-gradient(180deg, rgba(40,90,40,.12), rgba(20,50,90,.08));
+  box-shadow: inset 0 0 80px rgba(0,40,120,.25);
+}
+.arena-lights {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 28% 18% at 18% 0%, rgba(255,255,255,.18), transparent 70%),
+    radial-gradient(ellipse 28% 18% at 82% 0%, rgba(255,255,255,.18), transparent 70%),
+    radial-gradient(ellipse 40% 22% at 50% 0%, rgba(180,210,255,.22), transparent 70%);
+  animation: lights-breathe 6s ease-in-out infinite;
+}
+.arena-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,.55) 100%);
+}
+@keyframes lights-breathe {
+  0%, 100% { opacity: .85 }
+  50%      { opacity: 1 }
+}
+
+.hud-shine {
+  position: absolute; inset: 0; pointer-events: none; z-index: 6;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.16) 50%, transparent 62%);
+  transform: translate3d(-120%, 0, 0);
+}
+
+html.obs-overlay,
+html.obs-overlay body,
+html.obs-overlay #root {
+  background: transparent !important;
+  overflow: hidden;
+  margin: 0;
+  height: 100%;
+}
+
+.hud-board.bcast-idle {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.hud-board.bcast-entering .cin-photo-l,
+.hud-board.bcast-entering .cin-photo-r,
+.hud-board.bcast-entering .cin-stats,
+.hud-board.bcast-entering .cin-header,
+.hud-board.bcast-exiting .cin-photo-l,
+.hud-board.bcast-exiting .cin-photo-r,
+.hud-board.bcast-exiting .cin-stats,
+.hud-board.bcast-exiting .cin-header {
+  will-change: transform, opacity;
+}
+
+.hud-board.bcast-entering::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 142px;
+  height: 3px;
+  z-index: 7;
+  background: #f6e712;
+  box-shadow: 0 0 12px rgba(246, 231, 18, .65);
+  transform: scaleX(0);
+  transform-origin: center;
+  animation: bcast-bar .45s .52s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes bcast-in-l {
+  from { transform: translate3d(-102%, 0, 0); opacity: .35 }
+  to   { transform: translate3d(0, 0, 0); opacity: 1 }
+}
+@keyframes bcast-in-r {
+  from { transform: translate3d(102%, 0, 0); opacity: .35 }
+  to   { transform: translate3d(0, 0, 0); opacity: 1 }
+}
+@keyframes bcast-stats-in {
+  from { transform: scaleX(.06); opacity: 0 }
+  to   { transform: scaleX(1); opacity: 1 }
+}
+@keyframes bcast-header-in {
+  from { transform: translate3d(0, -108%, 0); opacity: 0 }
+  to   { transform: translate3d(0, 0, 0); opacity: 1 }
+}
+@keyframes bcast-row-in {
+  from { transform: translate3d(0, 12px, 0); opacity: 0 }
+  to   { transform: translate3d(0, 0, 0); opacity: 1 }
+}
+@keyframes bcast-rating-in {
+  from { transform: scale(.72); opacity: 0 }
+  to   { transform: scale(1); opacity: 1 }
+}
+@keyframes bcast-bar {
+  from { transform: scaleX(0) }
+  to   { transform: scaleX(1) }
+}
+@keyframes shine-sweep {
+  from { transform: translate3d(-120%, 0, 0) }
+  to   { transform: translate3d(120%, 0, 0) }
+}
+@keyframes bcast-header-out {
+  from { transform: translate3d(0, 0, 0); opacity: 1 }
+  to   { transform: translate3d(0, -108%, 0); opacity: 0 }
+}
+@keyframes bcast-stats-out {
+  from { transform: scaleX(1); opacity: 1 }
+  to   { transform: scaleX(.08); opacity: 0 }
+}
+@keyframes bcast-out-l {
+  from { transform: translate3d(0, 0, 0); opacity: 1 }
+  to   { transform: translate3d(-102%, 0, 0); opacity: 0 }
+}
+@keyframes bcast-out-r {
+  from { transform: translate3d(0, 0, 0); opacity: 1 }
+  to   { transform: translate3d(102%, 0, 0); opacity: 0 }
+}
+@keyframes bcast-board-out {
+  from { opacity: 1 }
+  to   { opacity: 0 }
+}
+
+.hud-board.bcast-entering .cin-photo-l {
+  animation: bcast-in-l .55s .04s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hud-board.bcast-entering .cin-photo-r {
+  animation: bcast-in-r .55s .14s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hud-board.bcast-entering .cin-stats {
+  transform-origin: 50% 50%;
+  animation: bcast-stats-in .58s .28s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hud-board.bcast-entering .cin-header {
+  animation: bcast-header-in .48s .58s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hud-board.bcast-entering .cin-row {
+  animation: bcast-row-in .4s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hud-board.bcast-entering .cin-rating {
+  animation: bcast-rating-in .45s .95s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hud-board.bcast-entering .hud-shine {
+  animation: shine-sweep 1.05s .42s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.hud-board.bcast-exiting .cin-header {
+  animation: bcast-header-out .32s cubic-bezier(.4, 0, 1, 1) both;
+}
+.hud-board.bcast-exiting .cin-stats {
+  transform-origin: 50% 50%;
+  animation: bcast-stats-out .38s .1s cubic-bezier(.4, 0, 1, 1) both;
+}
+.hud-board.bcast-exiting .cin-photo-l {
+  animation: bcast-out-l .42s .22s cubic-bezier(.4, 0, 1, 1) both;
+}
+.hud-board.bcast-exiting .cin-photo-r {
+  animation: bcast-out-r .42s .22s cubic-bezier(.4, 0, 1, 1) both;
+}
+.hud-board.bcast-exiting {
+  animation: bcast-board-out .22s .72s linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-pop, .stat-pop, .fade-in, .live-dot, .arena-lights,
+  .hud-board.bcast-entering .cin-photo-l,
+  .hud-board.bcast-entering .cin-photo-r,
+  .hud-board.bcast-entering .cin-stats,
+  .hud-board.bcast-entering .cin-header,
+  .hud-board.bcast-entering .cin-row,
+  .hud-board.bcast-entering .cin-rating,
+  .hud-board.bcast-entering .hud-shine,
+  .hud-board.bcast-entering::after,
+  .hud-board.bcast-exiting,
+  .hud-board.bcast-exiting .cin-header,
+  .hud-board.bcast-exiting .cin-stats,
+  .hud-board.bcast-exiting .cin-photo-l,
+  .hud-board.bcast-exiting .cin-photo-r { animation: none }
+}
